@@ -14,6 +14,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Travel_Website_Backend.Data;
 using Travel_Website_Backend.Repository;
+using Travel_Website_Backend.Repository.EventRepository;
 
 namespace Travel_Website_Backend
 {
@@ -31,7 +32,22 @@ namespace Travel_Website_Backend
         {
             services.AddDbContext<AppDbContext>(options=>options.UseSqlServer(Configuration.GetConnectionString("TravelWebsiteDb")));
             services.AddControllers();
+            var provider = services.BuildServiceProvider();
+            var configuration = provider.GetService<IConfiguration>();
+            services.AddCors(
+                options =>
+                {
+                    var frontendUrl = configuration.GetValue<string>("frontend_url");
+                    options.AddDefaultPolicy(builder =>
+                    {
+                        builder.WithOrigins(frontendUrl).AllowAnyMethod().AllowAnyHeader();
+
+                    });
+                }
+
+                 );
             services.AddTransient<IAdminRepository, AdminRepository>();
+            services.AddTransient<IEventRepository, EventRepository>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Travel_Website_Backend", Version = "v1" });
@@ -49,7 +65,7 @@ namespace Travel_Website_Backend
             }
 
             app.UseHttpsRedirection();
-
+            app.UseCors();
             app.UseRouting();
 
             app.UseAuthorization();

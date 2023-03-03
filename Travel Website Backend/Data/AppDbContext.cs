@@ -11,5 +11,6 @@ namespace Travel_Website_Backend.Data
 
         }
         public DbSet<Admin> Admins { get; set; }
+        public DbSet<Event> Events { get; set; }
     }
 }

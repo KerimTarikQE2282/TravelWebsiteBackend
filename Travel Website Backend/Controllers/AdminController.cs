@@ -15,7 +15,7 @@ namespace Travel_Website_Backend.Controllers
         public AdminController(IAdminRepository Ar) {
             AdminRepository = Ar;
         }
-        [HttpGet("")]
+        [HttpPost("")]
         public async Task<IActionResult> AdminLogin([FromBody] Login login )
         {
             var Status = await AdminRepository.Login(login.Email, login.Password);
